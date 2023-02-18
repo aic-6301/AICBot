@@ -4,6 +4,7 @@ WORKDIR /app
 COPY . /app
 
 RUN apt-get update && apt-get install -y ffmpeg
+RUN git pull
 
 RUN python -m pip install \
 --upgrade pip \
