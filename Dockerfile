@@ -1,16 +1,13 @@
-FROM python:3
-USER root
+FROM python:3.10
 
-RUN apt-get update
-RUN apt-get -y install locales && \
-    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
-ENV LANG ja_JP.UTF-8
-ENV LANGUAGE ja_JP:ja
-ENV LC_ALL ja_JP.UTF-8
-ENV TZ JST-9
-ENV TERM xterm
+WORKDIR /app
+COPY . /app
 
-RUN apt-get install -y vim less
-RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
-RUN python -m pip install -r requirements.txt
+RUN apt-get update && apt-get install -y ffmpeg
+
+RUN python -m pip install \
+--upgrade pip \
+--upgrade setuptools \
+-r requirements.txt
+
+CMD ["python3.10", "entrancebot.py"]
