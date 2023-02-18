@@ -1,4 +1,4 @@
 discord.py == 2.1.0
-dotenv
+python-dotenv
 traceback
 motor
