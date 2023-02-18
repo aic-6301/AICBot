@@ -8,7 +8,7 @@ import datetime
 import traceback
 
 dotenv.load_dotenv()
-token = os.environ.get('token')
+token = os.getenv('token')
 
 
 
