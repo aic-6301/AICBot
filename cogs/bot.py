@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, components
+from discord.ext import commands
 
 
 class invitebutton(discord.ui.View):
