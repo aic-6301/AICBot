@@ -11,4 +11,4 @@ RUN python -m pip install \
 --upgrade setuptools \
 -r requirements.txt
 
-CMD ["python3.10", "entrancebot.py"]
+CMD ["python", "entrancebot.py"]
