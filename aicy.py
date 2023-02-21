@@ -23,9 +23,10 @@ class AicyBot(commands.Bot):
         self.start_time = datetime.datetime.now()
     async def on_ready(self):
         await self.change_presence(status="Offline") # なんとなく
-        """self.dbclient = motor.AsyncIOMotorClient("localhost:27017")
-        self.db = self.dbclient["AicyBot"]
-        self.guild_set = self.db.guild_set"""
+        bot.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
+        # サーバーの設定を保存するコレクションを取得する
+        bot.db = bot.dbclient["AicyBot"]
+        bot.servers_settings = bot.db.servers_settings # サーバー設定保存
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):
                 try:
@@ -39,13 +40,9 @@ class AicyBot(commands.Bot):
             print("Loaded extension: Jishaku")
         except Exception:
             traceback.print_exc()
-        try:
-            await self.load_extension("discord.ext.components") # Load jishaku
-            print("Loaded extension: dpy-components")
-        except Exception:
-            traceback.print_exc()
         await self.tree.sync() # Slash command automatic sync
         await self.change_presence(activity=discord.Game(name="あいしぃーのためのぼっと"), status="Online")
+        await bot.get_channel(1058005805426814976).send(embed=discord.Embed(title="Startup Program finished!", description=f"Logging in {self.user.name}\nStart time: {discord.utils.format_dt(self.start_time)}"))
         print(f"Startup Program finished!\nLogging in {self.user.name}")
 
 
