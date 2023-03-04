@@ -11,4 +11,4 @@ RUN python -m pip install \
 --upgrade setuptools \
 -r requirements.txt
 
-CMD ["python", "entrancebot.py"]
+CMD ["python", "aicy.py"]
