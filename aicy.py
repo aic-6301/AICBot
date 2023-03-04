@@ -3,7 +3,7 @@ from discord.ext import commands, components
 from typing import DefaultDict
 from collections import defaultdict
 import copy
-from motor import motor_asyncio as motor
+import pymongo
 import dotenv
 import os
 import datetime
@@ -13,17 +13,18 @@ dotenv.load_dotenv()
 token = os.getenv('token')
 
 
-
-
 class AicyBot(commands.Bot):
     def __init__(self):
         super().__init__(
             command_prefix="a!",
             intents=discord.Intents.all(),
+            
             )
         self.start_time = datetime.datetime.now()
     async def on_ready(self):
         await self.change_presence(status="Offline") # なんとなく
+        bot.dbclient = pymongo.MongoClient('mongodb://localhost:27017')
+        bot.db = bot.dbclient['AicyBot']
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):
                 try:
