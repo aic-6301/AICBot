@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands, components
+from typing import DefaultDict
+from collections import defaultdict
+import copy
 from motor import motor_asyncio as motor
-
 import dotenv
 import os
 import datetime
@@ -18,15 +20,10 @@ class AicyBot(commands.Bot):
         super().__init__(
             command_prefix="a!",
             intents=discord.Intents.all(),
-            
             )
         self.start_time = datetime.datetime.now()
     async def on_ready(self):
         await self.change_presence(status="Offline") # なんとなく
-        bot.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
-        # サーバーの設定を保存するコレクションを取得する
-        bot.db = bot.dbclient["AicyBot"]
-        bot.servers_settings = bot.db.servers_settings # サーバー設定保存
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):
                 try:

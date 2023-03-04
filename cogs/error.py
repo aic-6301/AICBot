@@ -24,7 +24,7 @@ class Error(commands.Cog):
             await ctx.reply(embed=discord.Embed(title="エラー - Missing Required Argument", description="必要な引数が足りません。", color=discord.Color.red()))
         elif isinstance(error, commands.errors.BotMissingPermissions):
             await ctx.reply(embed=discord.Embed(title="エラー - Bot Missing Permissions", description="Botが実行するのに必要な権限が足りません。", color=discord.Color.red()))
-            
+
 
 async def setup(bot):
     await bot.add_cog(Error(bot))
