@@ -21,10 +21,10 @@ class AicyBot(commands.Bot):
             
             )
         self.start_time = datetime.datetime.now()
+        self.dbclient = pymongo.MongoClient("mongodb://localhost:27017")
+        self.db = self.dbclient['AicyBot']
     async def on_ready(self):
         await self.change_presence(status="Offline") # なんとなく
-        bot.dbclient = pymongo.MongoClient('mongodb://localhost:27017')
-        bot.db = bot.dbclient['AicyBot']
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):
                 try:
