@@ -39,6 +39,6 @@ class Bot(commands.Cog):
                                         .add_field(name="ライブラリ",value=f"`Python 3.10`, `discord.py {discord.__version__}`")
                                         .add_field(name="サーバー数", value=f"{len(self.bot.guilds)}")
                                         .add_field(name="メンバー数", value=f"{len(self.bot.users)}")
-                                        , view=discord.ui.Button(label="Botを導入する", emoji="🏷️", style=discord.ButtonStyle.url, url="https://discord.com/api/oauth2/authorize?client_id=973928793154662410&permissions=1194000908287&scope=bot%20applications.commands"))
+                                        )
 async def setup(bot):
     await bot.add_cog(Bot(bot))

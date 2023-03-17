@@ -5,18 +5,40 @@ import json
 import requests
 from pytube import extract
 
+class link_view(discord.ui.View):
+    def __init__(self, data, id):
+        super().__init__()
+        self.timeout = False
+        self.data = data
+
+        self.add_item(discord.ui.Button(label="動画を見る", style=discord.ButtonStyle.url, url="https://www.youtube.com/watch?v="+id))
+    @discord.ui.button(label="概要欄", style=discord.ButtonStyle.secondary, emoji="📝", row=1)
+    async def description(self, interaction: discord.Interaction, button: discord.ui.button):
+        await interaction.response.send_message(embed=discord.Embed(title=self.data['items'][0]['snippet']['title']+"の概要欄", description=self.data['items'][0]['snippet']['description'], color=discord.Color.from_rgb(255, 11, 0)), ephemeral=True)
+        return
+    @discord.ui.button(label="削除する", style=discord.ButtonStyle.danger, emoji="🗑️", row=1)
+    async def delete_emb(self, interaction: discord.Interaction, button: discord.ui.button):
+        message = await interaction.channel.fetch_message(interaction.message.id)
+        await message.delete()
+
 class Youtube(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot:
+        try:
+            id = extract.video_id(message.content)
+        except Exception:
+                id = None
+        if id is None:
             return
-        permission = message.channel.permissions_for(message.author)
-        if permission.embed_links is True:
+        else:
+            await message.add_reaction("🔍")
             return
-        if message.content in "youtube.com/watch?v=" or  "youtu.be/":
+
+
+    async def link_search(self, message):
             try:
                 id = extract.video_id(message.content)
             except Exception as e:
@@ -30,13 +52,15 @@ class Youtube(commands.Cog):
                 viewcount = "{:,}".format(int(data['items'][0]['statistics']['viewCount']))
                 if len(data['items'][0]['snippet']['description']) <= 500:
                     embed = discord.Embed(title=data['items'][0]['snippet']['title'], description=data['items'][0]['snippet']['description'], color=discord.Color.from_rgb(255, 11, 0), url="https://www.youtube.com/watch?v="+id)
+                    view = link_view(data, id)
                 else:
                     embed = discord.Embed(title=data['items'][0]['snippet']['title'], color=discord.Color.from_rgb(255, 11, 0), url="https://www.youtube.com/watch?v="+id)
+                    view = link_view(data, id)
                 #embed.add_field(name="アップロード日", value=f"{discord.utils.format_dt(data['items'][0]['snippet']['publishedAt'])}{discord.utils.format_dt(data['items'][0]['snippet']['publishedAt'], style='R')}")
                 embed.set_author(name=data['items'][0]['snippet']['channelTitle'], url="https://youtube.com/channel/"+data['items'][0]['snippet']['channelId'])
                 embed.set_image(url=data['items'][0]['snippet']['thumbnails']['maxres']['url'])
                 embed.set_footer(text=f"{viewcount}回視聴")
-                await message.reply(embed=embed, mention_author=False)
+                return embed, view
     @commands.group()
     async def search(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -53,6 +77,14 @@ class Youtube(commands.Cog):
         embed.add_field(name=data['items'][3]['snippet']['channelTitle'], value=f"[{data['items'][3]['snippet']['title']}](https://www.youtube.com/watch?v={data['items'][3]['id']['videoId']})", inline=False)
         embed.add_field(name=data['items'][4]['snippet']['channelTitle'], value=f"[{data['items'][4]['snippet']['title']}](https://www.youtube.com/watch?v={data['items'][4]['id']['videoId']})", inline=False)
         await ctx.reply(embed=embed)
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+        message = await (self.bot.get_guild(payload.guild_id).get_channel(payload.channel_id).fetch_message(payload.message_id))
+        if payload.user_id == self.bot.user.id:
+            return
+        if payload.emoji.name == "🔍":
+            embed, view = await self.link_search(message)
+            await message.reply(embed=embed, view=view)
 
 
 async def setup(bot):

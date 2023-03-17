@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands, components
 from typing import DefaultDict
-from collections import defaultdict
-import copy
+from collections import defaultdict 
 import pymongo
 import dotenv
 import os
@@ -25,7 +24,6 @@ class AicyBot(commands.Bot):
         self.db = self.dbclient['AicyBot']
         self.server_set = self.db['server_settings']
     async def on_ready(self):
-        await self.change_presence(status="Offline") # なんとなく
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):
                 try:
