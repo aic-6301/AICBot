@@ -1,7 +1,5 @@
 import discord
-from discord.ext import commands, components
-from typing import DefaultDict
-from collections import defaultdict 
+from discord.ext import commands
 import pymongo
 import dotenv
 import os
