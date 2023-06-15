@@ -82,7 +82,7 @@ class Youtube(commands.Cog):
         message = await (self.bot.get_guild(payload.guild_id).get_channel(payload.channel_id).fetch_message(payload.message_id))
         if payload.user_id == self.bot.user.id:
             return
-        if payload.emoji.name == "🔍":
+        if payload.emoji.name == "<:Search_youtube:1118815965396877380>":
             embed, view = await self.link_search(message)
             await message.reply(embed=embed, view=view)
 
