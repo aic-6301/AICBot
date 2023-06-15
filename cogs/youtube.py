@@ -34,7 +34,7 @@ class Youtube(commands.Cog):
         if id is None:
             return
         else:
-            await message.add_reaction("🔍")
+            await message.add_reaction("<:Search_youtube:1118815965396877380>")
             return
 
 
