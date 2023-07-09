@@ -29,13 +29,11 @@ class Youtube(commands.Cog):
     async def on_message(self, message):
         try:
             id = extract.video_id(message.content)
-        except Exception:
-                id = None
-        if id is None:
-            return
-        else:
             await message.add_reaction("<:Search_youtube:1118815965396877380>")
             return
+        except:
+                id = None
+
 
 
     async def link_search(self, message):
