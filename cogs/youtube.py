@@ -56,9 +56,9 @@ class Youtube(commands.Cog):
                     view = link_view(data, id)
                 #embed.add_field(name="アップロード日", value=f"{discord.utils.format_dt(data['items'][0]['snippet']['publishedAt'])}{discord.utils.format_dt(data['items'][0]['snippet']['publishedAt'], style='R')}")
                 embed.set_author(name=data['items'][0]['snippet']['channelTitle'], url="https://youtube.com/channel/"+data['items'][0]['snippet']['channelId'])
-                if data['items'][0]['snippet']['thumbnails']['maxres']['url']:
+                try:
                     embed.set_image(url=data['items'][0]['snippet']['thumbnails']['maxres']['url'])
-                else:
+                except:
                     embed.set_image(url=data['items'][0]['snippet']['thumbnails']['standard']['url'])
                 embed.set_footer(text=f"{viewcount}回視聴")
                 return embed, view
