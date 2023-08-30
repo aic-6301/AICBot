@@ -22,7 +22,7 @@ class AicyBot(commands.Bot):
         self.db = self.dbclient['AicyBot']
         self.server_set = self.db['server_settings']
     async def on_ready(self):
-        for file in os.listdir('./cogs'):
+        for file in os.listdir(os.getenv("COG_FOLDER")):
             if file.endswith('.py'):
                 try:
                     await self.load_extension(f'cogs.{file[:-3]}')
