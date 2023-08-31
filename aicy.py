@@ -38,6 +38,7 @@ class AicyBot(commands.Bot):
         await self.tree.sync() # Slash command automatic sync
         await self.change_presence(activity=discord.Game(name="あいしぃーのためのぼっと"), status="Online")
         await bot.get_channel(1058005805426814976).send(embed=discord.Embed(title="Startup Program finished!", description=f"Logging in {self.user.name}\nStart time: {discord.utils.format_dt(self.start_time)}"))
+        await bot.get_channel(1145593830998016070).send(embed=discord.Embed(title="サーバーが起動しました！", description=f"サーバーが起動した時間:{discord.utils.format_dt(self.start_time)}"))
         print(f"Startup Program finished!\nLogging in {self.user.name}")
 
 
