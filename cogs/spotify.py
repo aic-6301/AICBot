@@ -9,36 +9,73 @@ import os
 class spotify(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+    
 
     @commands.Cog.listener()
     async def on_presence_update(self, before, after):
+        global before_activity
         if after.bot:
             return
-        print(after)
-        print(after.activities)
+        if before.activities is not None:
+            for activity in before.activities:
+                if isinstance(activity, discord.Spotify):
+                    before_activity = activity
         for activities in after.activities:
-            print(activities)
             if isinstance(activities, discord.Spotify):
-                activities = after.activities
-                file = Path(f"data/{after.guild.id}.json")
-                file.touch(exist_ok=True)
-                with open(file=file, mode="r+", encoding="utf-8") as data:
-                    config = json.load(data)
-                print(data.name)
-                print(config)
-                if str(after.guild.id) in data.name:
-                    print("y")
-                    if config["Spotify"]:
-                        print("y2")
-                        embed = discord.Embed(title=f"{after.display_name}がSpotifyで{activities.title}を再生中です!",description=f"再生中 - {activities.title}\n 残り{discord.utils.format_dt(activities.end, style='R')}", color=discord.Spotify.color, url=activities.track_url)
-                        embed.add_field(name="タイトル", value=activities.title, inline=True)
-                        embed.add_field(name="アルバム", value=f"{activities.album}")
-                        embed.add_field(name="歌っている人", value=f"[{activities.artist} 検索](https://google.com/search?q={activities.artist})")
-                        embed.set_image(url=activities.album_cover_url)
-                        if config["Spotify_ch"] is None:
-                            await after.guild.system_channel.send(embed=embed)
-                        else:
-                            await self.bot.get_channel(config["Spotify_ch"]).send(embed)
+                    if before_activity.title != activities.title or before_activity is None:
+                        file = Path(f"data/{after.guild.id}.json")
+                        file.touch(exist_ok=True)
+                        with open(file=file, mode="r+", encoding="utf-8") as data:
+                            config = json.load(data)
+                        if str(after.guild.id) in data.name:
+                            if config["Spotify"] is True:
+                                embed = discord.Embed(title=f"{after.display_name}の再生中の曲", description=f"再生中 - {activities.title}\n 残り{discord.utils.format_dt(activities.end, style='R')}",color=discord.Color.from_str("#0x1DB954"), url=activities.track_url)
+                                # embed = discord.Embed(title=f"{after.display_name}がSpotifyで{activities.title}を再生中です!", description=f"再生中 - {activities.title}\n 残り{discord.utils.format_dt(activities.end, style='R')}", color=discord.Color.from_str(0x1DB954), url=activities.track_url)
+                                embed.add_field(name="タイトル", value=activities.title, inline=True)
+                                embed.add_field(name="アルバム", value=f"{activities.album}")
+                                embed.add_field(name="歌っている人", value=f"{activities.artist}")
+                                view = discord.ui.View()
+                                view.add_item(discord.ui.Button(label=f"{activities.artist} 検索", style=discord.ButtonStyle.url, url=f"https://google.com/search?q={(activities.artist)}"))
+                                view.add_item(discord.ui.Button(label=f"聴いてみる！", style=discord.ButtonStyle.url, url=activities.track_url))
+                                if activities.album_cover_url:
+                                    print(activities.album_cover_url)
+                                    embed.set_thumbnail(url=activities.album_cover_url)
+                                else:
+                                    pass
+                                try:
+                                    if config["Spotify_ch"] is None:
+                                        await after.guild.system_channel.send(embed=embed, view=view)
+                                    else:
+                                        await self.bot.get_channel(config["Spotify_ch"]).send(embed=embed, view=view)
+                                except:
+                                    embed.set_thumbnail(url=None)
+                                    if config["Spotify_ch"] is None:
+                                        await after.guild.system_channel.send(embed=embed, view=view)
+                                    else:
+                                        await self.bot.get_channel(config["Spotify_ch"]).send(embed=embed, view=view)
+
+    @app_commands.command(name="spotify", description="再生中の曲を表示します")
+    async def spotify(self, interaction: discord.Interaction):
+        print("fire")
+        print(interaction.user)
+        for activities in interaction.user.activities:
+            if isinstance(activities, discord.Spotify):
+                embed = discord.Embed(title=f"{interaction.user.display_name}の再生中の曲", description=f"再生中 - {activities.title}\n 残り{discord.utils.format_dt(activities.end, style='R')}",color=discord.Color.from_str("#0x1DB954"), url=activities.track_url)
+                # embed = discord.Embed(title=f"{after.display_name}がSpotifyで{activities.title}を再生中です!", description=f"再生中 - {activities.title}\n 残り{discord.utils.format_dt(activities.end, style='R')}", color=discord.Color.from_str(0x1DB954), url=activities.track_url)
+                embed.add_field(name="タイトル", value=activities.title, inline=True)
+                embed.add_field(name="アルバム", value=f"{activities.album}")
+                embed.add_field(name="歌っている人", value=f"{activities.artist}")
+                view = discord.ui.View()
+                view.add_item(discord.ui.Button(label=f"{activities.artist} 検索", style=discord.ButtonStyle.url, url=f"https://google.com/search?q={(activities.artist)}"))
+                view.add_item(discord.ui.Button(label=f"聴いてみる！", style=discord.ButtonStyle.url, url=activities.track_url))
+                if activities.album_cover_url:
+                    print(activities.album_cover_url)
+                    embed.set_thumbnail(url=activities.album_cover_url)
+                else:
+                    pass
+                await interaction.response.send_message(embed=embed, view=view)
+            else:
+                await interaction.response.send_message(embed=discord.Embed(title="エラー", description="何も再生していません！", color=discord.Color.red()))
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(spotify(bot))
