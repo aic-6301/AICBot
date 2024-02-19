@@ -36,7 +36,9 @@ class Afk(commands.Cog):
                 else:
                     reason = data['reason']
                 user=await self.bot.fetch_user(data['user_id'])
-                await message.reply(embed=discord.Embed(title=f"{user.name}はAFKです。", description=f"理由：{str(reason)}", color=discord.Color.from_rgb(237, 175, 65)).set_footer(text="このメッセージは5秒後に削除されます。"), delete_after=5)
+                await message.reply(embed=discord.Embed(title=f"{user.name}はAFKです。",
+                                                         description=f"理由：{str(reason)}", color=discord.Color.from_rgb(237, 175, 65)
+                                                         ).set_footer(text="このメッセージは5秒後に削除されます。"), delete_after=5)
 
     async def afk_get(self, message):
         messages = self.bot.get_channel(1094512811557797969).history(limit=None)
@@ -70,7 +72,8 @@ class Afk(commands.Cog):
         else:
             ba = await self.afk_del(msgid=back)
             if ba == "ok":
-                await message.reply(embed=discord.Embed(title="AFKを解除しました", color=discord.Color.green()).set_footer(text="このメッセージは5秒後に削除されます"), delete_after=5)
+                await message.reply(embed=discord.Embed(title="AFKを解除しました", color=discord.Color.green()
+                                                        ).set_footer(text="このメッセージは5秒後に削除されます"), delete_after=5)
             else:
                 await message.reply("失敗")
 
