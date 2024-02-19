@@ -50,7 +50,7 @@ class settings(commands.Cog):
                 with open(file=file, mode="r+", encoding="utf-8") as data:
                     config = json.load(data)
                 config["Spotify"] = True
-                config["Spotify_ch"] = interaction.channel.id
+                config["Spotify_ch"] = interaction.channel_id
                 with open(f"data/{interaction.guild.id}.json", "w+", encoding="utf-8") as file:
                     json.dump(config, file)
                 await interaction.response.send_message(embed=discord.Embed(title="✅設定完了", description=f"Spotifyの再生の通知を有効に設定しました。"))
