@@ -14,7 +14,6 @@ class Afk(commands.Cog):
         dic.update({"user_id": str(ctx.author.id)})
         dic.update({"reason": str(reason)})
         data = json.dumps(dic, ensure_ascii=False)
-        print(data)
         msg = await self.bot.get_channel(1094512811557797969).send(data)
         return "Done"
 
@@ -32,13 +31,14 @@ class Afk(commands.Cog):
         async for msg in messages:
             if mention in msg.content:
                 data = json.loads(msg.content)
-                print(data)
                 if data['reason'] == "None":
                     reason="なし"
                 else:
                     reason = data['reason']
                 user=await self.bot.fetch_user(data['user_id'])
-                await message.reply(embed=discord.Embed(title=f"{user.name}はAFKです。", description=f"理由：{str(reason)}", color=discord.Color.from_rgb(237, 175, 65)).set_footer(text="このメッセージは5秒後に削除されます。"), delete_after=5)
+                await message.reply(embed=discord.Embed(title=f"{user.name}はAFKです。",
+                                                         description=f"理由：{str(reason)}", color=discord.Color.from_rgb(237, 175, 65)
+                                                         ).set_footer(text="このメッセージは5秒後に削除されます。"), delete_after=5)
 
     async def afk_get(self, message):
         messages = self.bot.get_channel(1094512811557797969).history(limit=None)
@@ -63,9 +63,7 @@ class Afk(commands.Cog):
         if message.author.bot:
             return
         back = await self.afk_get(message)
-        print(back)
         if back is None:
-            print(message.mentions)
             if not message.mentions:
                 return
             else:
@@ -73,9 +71,9 @@ class Afk(commands.Cog):
                 return
         else:
             ba = await self.afk_del(msgid=back)
-            print(ba)
             if ba == "ok":
-                await message.reply(embed=discord.Embed(title="AFKを解除しました", color=discord.Color.green).set_footer(text="このメッセージは5秒後に削除されます"), delete_after=5)
+                await message.reply(embed=discord.Embed(title="AFKを解除しました", color=discord.Color.green()
+                                                        ).set_footer(text="このメッセージは5秒後に削除されます"), delete_after=5)
             else:
                 await message.reply("失敗")
 

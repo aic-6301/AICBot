@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.ext import commands, tasks
 import traceback
 import json
@@ -10,59 +11,62 @@ class settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(aliases=['ss'])
-    async def server_settings(self, ctx ):
-        if ctx.invoked_subcommand is None:
-            await ctx.send("使用方法が違うよ！")
-    @server_settings.group(name="bot_role")
-    async def _bot_role(self, ctx):
-        if ctx.invoked_subcommand is None:
-            await ctx.send("使用方法が違うよ！")
-    @_bot_role.command(name="set")
-    async def role_set(self, ctx, bot_id: discord.Role):
+    group = app_commands.Group(name="server_settings", description="サーバーの設定をします。", guild_only=False)
+
+    @group.command(name="bot_role")
+    @app_commands.describe(bot_id="Botロールを指定します")
+    async def role_set(self, interaction:discord.Interaction, bot_id: discord.Role):
         try:
-            file = Path(f"data/{ctx.guild.id}.json")
+            file = Path(f"data/{interaction.guild.id}.json")
             file.touch(exist_ok=True)
             with open(file=file, mode="r+", encoding="utf-8") as data:
                 config = json.load(data)
             config["bot_role_id"] = bot_id.id
-            with open(f"data/{ctx.guild.id}.json", "w+", encoding="utf-8") as file:
-                json.dump(config, file, indent=1)
-            await ctx.send(embed=discord.Embed(title="✅設定完了", description=f"Botが入室した際、{bot_id.mention}にロールを付与するように設定しました。"))
+            with open(f"data/{interaction.guild.id}.json", "w+", encoding="utf-8") as file:
+                json.dump(config, file)
+            await interaction.response.send_message(embed=discord.Embed(title="✅設定完了", description=f"Botが入室した際、{bot_id.mention}にロールを付与するように設定しました。"))
         except:
             traceback.print_exc()
     
-    @server_settings.group(name="spotify")
-    async def _spotify(self, ctx):
-        if ctx.invoked_subcommand is None:
-            await ctx.send("使用方法が違うよ！")
-    
-    @_spotify.command(name="set")
-    async def spotify_set(self, ctx, mode: bool, channel: discord.TextChannel):
-        if mode:
+    @group.command(name="spotify")
+    async def spotify_set(self, interaction: discord.Interaction, mode: bool, channel: discord.TextChannel=None):
+        if mode or channel:
             try:
-                file = Path(f"data/{ctx.guild.id}.json")
+                file = Path(f"data/{interaction.guild.id}.json")
                 file.touch(exist_ok=True)
                 with open(file=file, mode="r+", encoding="utf-8") as data:
                     config = json.load(data)
                 config["Spotify"] = True
                 config["Spotify_ch"] = channel.id
-                with open(f"data/{ctx.guild.id}.json", "w+", encoding="utf-8") as file:
+                with open(f"data/{interaction.guild.id}.json", "w+", encoding="utf-8") as file:
                     json.dump(config, file)
-                await ctx.send(embed=discord.Embed(title="✅設定完了", description=f"Spotifyの再生の通知を有効に設定しました。"))
+                await interaction.response.send_message(embed=discord.Embed(title="✅設定完了", description=f"Spotifyの再生の通知を有効に設定しました。"))
+            except:
+                traceback.print_exc()
+        elif mode and channel is None:
+            try:
+                file = Path(f"data/{interaction.guild.id}.json")
+                file.touch(exist_ok=True)
+                with open(file=file, mode="r+", encoding="utf-8") as data:
+                    config = json.load(data)
+                config["Spotify"] = True
+                config["Spotify_ch"] = interaction.channel.id
+                with open(f"data/{interaction.guild.id}.json", "w+", encoding="utf-8") as file:
+                    json.dump(config, file)
+                await interaction.response.send_message(embed=discord.Embed(title="✅設定完了", description=f"Spotifyの再生の通知を有効に設定しました。"))
             except:
                 traceback.print_exc()
         else:
             try:
-                file = Path(f"data/{ctx.guild.id}.json")
+                file = Path(f"data/{interaction.guild.id}.json")
                 file.touch(exist_ok=True)
                 with open(file=file, mode="r+", encoding="utf-8") as data:
                     config = json.load(data)
                 config["Spotify"] = mode
                 config["Spotify_ch"] = None
-                with open(f"data/{ctx.guild.id}.json", "w+", encoding="utf-8") as file:
+                with open(f"data/{interaction.guild.id}.json", "w+", encoding="utf-8") as file:
                     json.dump(config, file, indent=2)
-                await ctx.send(embed=discord.Embed(title="✅設定完了", description=f"Spotifyの再生の通知を無効に設定しました。"))
+                await interaction.response.send_message(embed=discord.Embed(title="✅設定完了", description=f"Spotifyの再生の通知を無効に設定しました。"))
             except:
                 traceback.print_exc()
     
