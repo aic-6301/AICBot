@@ -31,7 +31,7 @@ class settings(commands.Cog):
     @group.command(name="spotify", description="Spotify再生通知を設定します。")
     @app_commands.describe(mode="有効化/無効化の選択", channel="Spotify再生通知を送るチャンネルを指定します(未入力で実行チャンネルに登録)")
     async def spotify_set(self, interaction: discord.Interaction, mode: bool, channel: discord.TextChannel=None):
-        if mode or channel:
+        if mode and channel:
             try:
                 file = Path(f"data/{interaction.guild.id}.json")
                 file.touch(exist_ok=True)
