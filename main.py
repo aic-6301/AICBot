@@ -14,7 +14,7 @@ token = os.getenv('token')
 class AicyBot(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix="at!",
+            command_prefix="a!",
             intents=discord.Intents.all(),
             
             )
