@@ -13,7 +13,7 @@ class settings(commands.Cog):
 
     group = app_commands.Group(name="server_settings", description="サーバーの設定をします。", guild_only=False)
 
-    @group.command(name="bot_role")
+    @group.command(name="bot_role", description="自動付与されるBotロールを設定します。")
     @app_commands.describe(bot_id="Botロールを指定します")
     async def role_set(self, interaction:discord.Interaction, bot_id: discord.Role):
         try:
@@ -28,7 +28,8 @@ class settings(commands.Cog):
         except:
             traceback.print_exc()
     
-    @group.command(name="spotify")
+    @group.command(name="spotify", description="Spotify再生通知を設定します。")
+    @app_commands.describe(mode="有効化/無効化の選択", channel="Spotify再生通知を送るチャンネルを指定します(未入力で実行チャンネルに登録)")
     async def spotify_set(self, interaction: discord.Interaction, mode: bool, channel: discord.TextChannel=None):
         if mode or channel:
             try:
