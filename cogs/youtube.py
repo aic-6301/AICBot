@@ -29,7 +29,7 @@ class Youtube(commands.Cog):
     async def on_message(self, message):
         try:
             id = extract.video_id(message.content)
-            await message.add_reaction("<:Search_youtube:1118815965396877380>")
+            await message.add_reaction("<:search_youtube:1209789663590621254>")
             return
         except:
                 id = None
@@ -83,7 +83,7 @@ class Youtube(commands.Cog):
         message = await (self.bot.get_guild(payload.guild_id).get_channel(payload.channel_id).fetch_message(payload.message_id))
         if payload.user_id == self.bot.user.id:
             return
-        if payload.emoji.name == "Search_youtube":
+        if payload.emoji.name == "search_youtube":
             embed, view = await self.link_search(message)
             await message.reply(embed=embed, view=view)
 
