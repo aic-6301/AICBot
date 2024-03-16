@@ -4,6 +4,7 @@ import os
 import json
 import requests
 from pytube import extract
+import re
 
 class link_view(discord.ui.View):
     def __init__(self, data, id):
@@ -27,6 +28,7 @@ class Youtube(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        r = re.match(r"(https://)?(www\.)(youtube\.com|youtu\.be)/?(watch\?v=)", message.content)
         try:
             id = extract.video_id(message.content)
             await message.add_reaction("<:search_youtube:1209789663590621254>")
