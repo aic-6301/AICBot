@@ -14,11 +14,10 @@ class dicebot(commands.Cog):
     @commands.command()
     async def dice(self, ctx, input):
         back = dice.dice(self, input)
-        print(back)
         if back is not False:
             await ctx.reply(f"{back}です！ ({input})")
         else:
-            await ctx.reply(back)
+            await ctx.reply(embed=discord.Embed(title="エラー", description="引数が不正です", color=discord.Color.red()))
             
 
 
