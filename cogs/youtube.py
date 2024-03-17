@@ -29,9 +29,11 @@ class Youtube(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         r = re.match(r"(https://)?(www\.)(youtube\.com|youtu\.be)/?(watch\?v=)", message.content)
+        if r is None:
+            return
         try:
             id = extract.video_id(message.content)
-            if id is None:
+            if id is not None:
                 await message.add_reaction("<:search_youtube:1209789663590621254>")
         except:
             id = None
