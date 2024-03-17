@@ -31,10 +31,11 @@ class Youtube(commands.Cog):
         r = re.match(r"(https://)?(www\.)(youtube\.com|youtu\.be)/?(watch\?v=)", message.content)
         try:
             id = extract.video_id(message.content)
-            await message.add_reaction("<:search_youtube:1209789663590621254>")
-            return
+            if id is None:
+                await message.add_reaction("<:search_youtube:1209789663590621254>")
         except:
-                id = None
+            id = None
+        print(id)
 
 
 
@@ -44,6 +45,7 @@ class Youtube(commands.Cog):
             except Exception as e:
                 id = None
             if id is None:
+                await message.reply("見つかりませんでした。\nID:{}".format(id))
                 return
             else:
                 url=requests.get(f"https://www.googleapis.com/youtube/v3/videos?id={id}&key={os.environ['youtube_api_key']}&part=snippet,statistics")
@@ -59,9 +61,9 @@ class Youtube(commands.Cog):
                 #embed.add_field(name="アップロード日", value=f"{discord.utils.format_dt(data['items'][0]['snippet']['publishedAt'])}{discord.utils.format_dt(data['items'][0]['snippet']['publishedAt'], style='R')}")
                 embed.set_author(name=data['items'][0]['snippet']['channelTitle'], url="https://youtube.com/channel/"+data['items'][0]['snippet']['channelId'])
                 try:
-                    embed.set_image(url=data['items'][0]['snippet']['thumbnails']['maxres']['url'])
+                    embed.set_image(url=data['items'][0]['snippet']['thumbnails']['high']['url'])
                 except:
-                    embed.set_image(url=data['items'][0]['snippet']['thumbnails']['standard']['url'])
+                    embed.set_image(url=data['items'][0]['snippet']['thumbnails']['default']['url'])
                 embed.set_footer(text=f"{viewcount}回視聴")
                 return embed, view
     @commands.group()
