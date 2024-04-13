@@ -24,7 +24,7 @@ class april(commands.Cog):
     @tasks.loop()
     async def april(self):
         now = datetime.now()
-        if now.hour == 14 and now.minute == 0:
+        if now.hour == 0 and now.minute == 0:
             if now.month == 4 and now.day == 1:
                 if self.message is None:
                     channels = self.get_data()
