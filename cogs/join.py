@@ -10,17 +10,22 @@ class join(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def get_data(self, guild):
+        db = self.bot.db.cursor()
+        db.execute(f"SELECT `role` FROM `bot` WHERE `guild` = ?", (guild.id,))
+        data = db.fetchone()
+        return data
+
+
     @commands.Cog.listener()
-    async def on_guild_join(self, guild: discord.Guild):
-        with open(f"data/{guild.id}.json", mode="w", encoding="utf-8") as file:
-            data = {"bot_role_id": None, "Spotify": False, "Spotify_ch": None}
-            file.write(data)
-            return
-        
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild: discord.Guild):
-        os.remove(f"data/{guild.id}.json")
-        return
+    async def on_member_join(self, member: discord.Member):
+        if member.bot:
+            data = self.get_data(member.guild)
+            if data:
+                await member.add_roles(member.guild.get_role(data[0]), reason="Botであり、ロールが設定されていたため。")
+                return
+            else:
+                return
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(join(bot))

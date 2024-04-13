@@ -86,12 +86,12 @@ class Youtube(commands.Cog):
         await ctx.reply(embed=embed)
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        message = await (self.bot.get_guild(payload.guild_id).get_channel(payload.channel_id).fetch_message(payload.message_id))
+        message:discord.Message = await (self.bot.get_guild(payload.guild_id).get_channel(payload.channel_id).fetch_message(payload.message_id))
         if payload.user_id == self.bot.user.id:
             return
         if payload.emoji.name == "search_youtube":
             embed, view = await self.link_search(message)
-            await message.reply(embed=embed, view=view)
+            await message.reply(embed=embed, view=view, mention_author=False)
 
 
 async def setup(bot):

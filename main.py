@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import pymongo
+import mariadb
 import dotenv
 import os
 import datetime
@@ -20,6 +20,12 @@ class AicyBot(commands.Bot):
             )
         self.start_time = datetime.datetime.now()
     async def on_ready(self):
+        bot.db = mariadb.connect(host="localhost",
+                                 port=3306,
+                                 password=os.getenv('password'),
+                                 user="root",
+                                 database="aicybot")
+        bot.afk_token = os.getenv("api_token")
         for file in os.listdir("./cogs"):
             if file.endswith('.py'):
                 try:
@@ -34,7 +40,7 @@ class AicyBot(commands.Bot):
         except Exception:
             traceback.print_exc()            
         sync = await self.tree.sync() # Slash command automatic sync
-        await self.change_presence(activity=discord.Game(name="あいしぃーによるぼっと"), status="Online")
+        await self.change_presence(activity=discord.CustomActivity(name="あいしぃーによるぼっと"), status="Online")
         await bot.get_channel(1058005805426814976).send(embed=discord.Embed(title="Startup Program finished!", description=f"Logging in {self.user.name}\n起動時間: {discord.utils.format_dt(self.start_time)}"))
         # await bot.get_channel(1145593830998016070).send(embed=discord.Embed(title="サーバーが起動しました！", description=f"サーバーが起動した時間:{discord.utils.format_dt(self.start_time)}"))
         print(f"起動完了!\nLogging in {self.user.name} ({self.user.id})\n 同期済みコマンド：{len(sync)}")
