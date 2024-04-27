@@ -21,7 +21,7 @@ class april(commands.Cog):
         data = [dict(zip(columns, row)) for row in db.fetchall()] # 結果を辞書に変
         return data
     
-    @tasks.loop()
+    @tasks.loop(seconds=15)
     async def april(self):
         now = datetime.now()
         if now.hour == 0 and now.minute == 0:
