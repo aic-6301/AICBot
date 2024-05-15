@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -43,5 +44,11 @@ class Bot(commands.Cog):
                     .add_field(name="サーバー数", value=f"{len(self.bot.guilds)}")
                     .add_field(name="メンバー数", value=f"{len(self.bot.users)}")
                     )
+        
+    @app_commands.command(name="sbc")
+    async def sbc(self, interaction):
+        await interaction.response.send_message("**Welcome to SBC!!!**\n**Join Here:https://black.shizen.lol/**")
+        
+
 async def setup(bot):
     await bot.add_cog(Bot(bot))
